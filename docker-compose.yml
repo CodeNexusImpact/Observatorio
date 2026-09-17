@@ -1,0 +1,19 @@
+# ODRF — Painel de Dados
+# Sobe o painel em http://localhost:8080
+#
+#   docker compose up -d --build     constrói a imagem (gera a base) e inicia
+#   docker compose logs -f           acompanha o servidor
+#   docker compose down              encerra
+#
+# A porta pode ser alterada com a variável ODRF_PORT (ex.: ODRF_PORT=9000 docker compose up -d).
+
+services:
+  painel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: odrf-painel:latest
+    container_name: odrf-painel
+    ports:
+      - "${ODRF_PORT:-8080}:80"
+    restart: unless-stopped

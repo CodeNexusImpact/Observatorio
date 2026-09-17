@@ -1,43 +1,67 @@
-# Observatório da Discriminação Racial no Futebol (ODRF) - Painel de Dados
+# Observatório da Discriminação Racial no Futebol (ODRF): Painel de Dados
 
-Este repositório contém o protótipo do Painel de Dados interativo para o Observatório da Discriminação Racial no Futebol.
+Protótipo do painel interativo que lê a planilha de casos do Observatório e a transforma em indicadores, recortes e consultas. Funciona abrindo `index.html` no navegador, sem servidor e sem instalação.
 
-## 1. Visão Geral e Arquitetura Técnica
-O protótipo é uma aplicação web estática (SPA - Single Page Application) construída em formato *Single-File* (código condensado em um único arquivo). É uma abordagem ágil ideal para demonstrações visuais e validações rápidas de fluxo e design.
+| | |
+|---|---|
+| **Base atual** | 680 casos, 2014 a 2024, gerados a partir de `Banco de Dados Observatorio Racial Futebol -.xlsx` |
+| **Conferência** | Totais comparados com `Revisão.xlsx` (51 indicadores, 4 divergências explicadas) |
+| **Tecnologia** | HTML, CSS e JavaScript puros; Chart.js, SlimSelect e SheetJS locais; Python 3 (biblioteca padrão) para gerar a base; Docker opcional |
+| **Regras** | Sem consulta por clube; ano corrente restrito ao modo interno; nomes e relatos fora da base pública |
 
-**Tecnologias e Bibliotecas Utilizadas:**
-* **HTML5 & CSS3 nativos:** Não utiliza frameworks externos (como Bootstrap ou Tailwind), garantindo um código leve, limpo e de carregamento instantâneo.
-* **CSS Variables (Custom Properties):** O uso do seletor `:root` permite a troca fluída entre Modo Claro (Light) e Modo Escuro (Dark) alterando apenas o atributo `data-theme` na tag raiz.
-* **JavaScript Vanilla:** Toda a lógica de renderização de interface, filtragem da base de dados e navegação em abas é feita com JS puro.
-* **SlimSelect (v2.8.2):** Utilizado para estilizar e aprimorar a usabilidade dos campos de seleção (`<select>`) nos filtros.
-* **Chart.js:** Biblioteca responsável pela plotagem e renderização dos gráficos analíticos (barras, listas horizontais e gráfico de rosca/donut).
-* **SheetJS (XLSX):** Ferramenta utilizada para permitir a exportação da tabela de dados filtrada para os formatos CSV e Excel.
+## Como usar
 
-## 2. Estrutura de Telas (Views)
-A interface é composta por uma barra superior e um menu lateral, alternando a área de conteúdo central entre 6 seções (Views):
+1. Abra `index.html` em um navegador atual (Chrome, Firefox, Edge ou Safari). Funciona sem internet: as bibliotecas estão em `assets/vendor/`.
+2. Navegue pelas telas no menu lateral: Visão geral, Consulta avançada, Metodologia e dados, Relatórios e Contato.
+3. Clique em **Modo interno** para simular o perfil da equipe: aparecem Administração, Qualidade e conferência, Fonte de dados e Governança.
 
-1. **Visão Geral:** Dashboard principal exibindo KPIs (total de casos, regiões, decisões judiciais) e gráficos de evolução histórica. Possui botões de "Acesso rápido" para aplicar filtros comuns.
-2. **Consulta Avançada:** Motor de busca e filtros combinados (Ano, Região, Competição, Categoria, Desdobramento, etc.) permitindo explorar detalhadamente os casos e gerar exportações.
-3. **Relatórios:** Uma vitrine conceitual para acessar os relatórios anuais em PDF já existentes do Observatório.
-4. **Contato:** Formulário simulado para contato institucional, pesquisas, imprensa e sugestões.
-5. **Área Interna / Admin:** Ambiente restrito (simulado por login) voltado à equipe do ODRF para checagem da integridade dos dados e pendências de revisão.
-6. **Fonte de Dados & Governança:** Interface de ingestão (upload local de planilhas via navegador) e registro claro das regras de negócio que ditam o comportamento do painel.
+## Como executar com Docker
 
-## 3. Dinâmica de Dados e Regras de Negócio
-No estágio atual, o protótipo carrega uma base de dados *mock* em formato JSON diretamente no script. Os dados tipificam ocorrências registradas desde 2014, classificadas por critérios como Estado, Gênero e o Desdobramento judicial.
+```bash
+docker compose up -d --build
+```
 
-**Princípios Institucionais Traduzidos em Código:**
-* **Sem Rankings de Clubes:** Por decisão institucional, o painel foca na denúncia do fenômeno estrutural e seus desdobramentos judiciais. Portanto, buscas e comparações nominais por clubes foram omitidas da interface.
-* **Privacidade Temporal (Ano Corrente):** Os dados do ano vigente ficam restritos à equipe interna e bloqueados para consultas públicas. Isso evita interferências metodológicas até o fechamento anual do relatório oficial.
+Abra `http://localhost:8080`. A imagem gera a base a partir das planilhas e serve o site com nginx, sem dependência de rede depois de construída. Instruções completas, incluindo como levar a imagem para uma máquina sem internet, em [docs/06-execucao-com-docker.md](docs/06-execucao-com-docker.md).
 
-## 4. Pontos Fortes do Protótipo
-* **UI/UX:** Design elegante (paleta terrosa), legível e focado na facilidade do acesso à informação.
-* **Responsividade:** Estrutura adaptável via *Media Queries*. A tabela se reconfigura para formato de *cards* em dispositivos móveis, e a barra lateral se transforma em um menu expansível.
-* **Print-Friendly:** Uso eficiente de `@media print` para ocultar elementos de interface (como barras e menus) e gerar folhas de impressão limpas apenas com o conteúdo dos dados.
+## Como regerar a base a partir da planilha
 
-## 5. Próximos Passos (Evolução para Produção)
-Para a conversão deste protótipo em uma aplicação de produção sustentável, sugere-se a seguinte evolução:
-1. **Modularização (Separação de Arquivos):** Desmembrar o arquivo único em uma estrutura robusta de `index.html`, `style.css` e submódulos `.js`.
-2. **Desacoplamento de Dados (Backend/API):** Remover o objeto JSON *mockado* do código cliente e passar a consultar as informações por meio de uma API ou banco de dados externo.
-3. **Integração de Framework (React/Vue):** Caso as regras de filtragem cruzada ganhem alta complexidade, a migração para um framework reativo ajudará na estabilidade e manutenção dos estados na tela de Consulta Avançada.
-4. **Otimização de Acessibilidade (a11y):** Inclusão de suporte total a navegação via teclado, alto contraste aprimorado e adição de `aria-labels` nos gráficos e componentes para leitores de tela.
+```bash
+python3 scripts/build_data.py
+```
+
+O script lê as abas anuais da planilha-base, aplica as regras de padronização, lê os totais da planilha de revisão e grava `data/casos.js`. Não precisa de nenhum pacote além do Python 3.10 ou superior.
+
+Para uma base interna com nomes, relatos e desfechos (não publicar nem versionar):
+
+```bash
+python3 scripts/build_data.py --completo
+```
+
+## Estrutura do repositório
+
+```
+index.html                      marcação das telas
+assets/css/styles.css           estilos, tokens de cor e tema escuro
+assets/js/app.js                lógica da interface
+assets/vendor/                  Chart.js, SlimSelect e SheetJS (versões fixas, uso offline)
+data/casos.js                   base gerada (não editar à mão)
+scripts/build_data.py           gera a base a partir das planilhas
+scripts/xlsx_reader.py          leitor de .xlsx sem dependências
+Dockerfile, docker-compose.yml  empacotamento em container (nginx)
+docker/nginx.conf               configuração do servidor estático
+docs/01-analise-do-prototipo.md diagnóstico do protótipo anterior e o que mudou
+docs/02-dicionario-de-dados.md  campos, regras de normalização e qualidade
+docs/03-arquitetura-e-regras.md como o painel funciona e as regras de negócio
+docs/04-guia-de-uso-e-manutencao.md operação do painel e da planilha
+docs/05-roteiro-de-apresentacao.md roteiro de demonstração com os números-chave
+docs/06-execucao-com-docker.md  construir, executar e transportar o container
+```
+
+## Documentação
+
+Comece por [docs/01-analise-do-prototipo.md](docs/01-analise-do-prototipo.md) para entender o diagnóstico e as decisões. Para apresentar o painel, use [docs/05-roteiro-de-apresentacao.md](docs/05-roteiro-de-apresentacao.md).
+
+## Limites conhecidos
+
+- O modo interno é uma simulação de perfil na interface. Não há autenticação: tudo o que está em `data/casos.js` é público para quem abre a página. Por isso a base pública já nasce sem dados sensíveis.
+- A normalização de competições é heurística e deve ser validada pela equipe (detalhes no dicionário de dados).

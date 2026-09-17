@@ -1,0 +1,9 @@
+.git
+.gitignore
+.dockerignore
+docker-compose.yml
+README.md
+data/
+__pycache__/
+*.pyc
+data/casos.interno.js
